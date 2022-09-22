@@ -1,9 +1,12 @@
 import { useDispatch, useSelector } from 'react-redux'
 import { fetchPosts } from './postsSlice'
+import { Toaster } from 'react-hot-toast'
+import Loader from '../../components/Loader'
 
 const PostsList = () => {
   const dispatch = useDispatch()
-  const allPosts = useSelector((state) => state.posts.entities)
+  const allPosts = useSelector((state) => state.posts.post)
+  const loading = useSelector((state) => state.posts.loading)
 
   const doFetchPost = () => {
     dispatch(fetchPosts())
@@ -11,6 +14,8 @@ const PostsList = () => {
 
   return (
     <>
+      <Toaster />
+
       <h1 className='flex justify-center text-2xl font-bold text-gray-900'>
         Posts Data
       </h1>
@@ -22,37 +27,20 @@ const PostsList = () => {
         Get Posts
       </button>
 
-      <div class='relative mt-8 overflow-x-auto rounded-lg'>
-        <table class='w-full text-left text-sm text-gray-300'>
-          <thead class='bg-gray-200/80 text-xs uppercase text-gray-900'>
-            <tr>
-              <th scope='col' class='py-3 px-6'>
-                Id
-              </th>
-              <th scope='col' class='py-3 px-6'>
-                Title
-              </th>
-              <th scope='col' class='py-3 px-6'>
-                Body
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {allPosts.map((post) => (
-              <tr className='border-b bg-white' key={post?.id}>
-                <td className='whitespace-nowrap py-4 px-6 font-medium text-gray-900'>
-                  {post?.id}
-                </td>
-                <td className='whitespace-nowrap py-4 px-6 font-medium text-gray-900'>
-                  {post?.title}
-                </td>
-                <td className='whitespace-nowrap py-4 px-6 font-medium text-gray-900'>
-                  {post?.body}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+      {loading && <Loader />}
+
+      <div className='mt-8 grid grid-cols-2 gap-4'>
+        {allPosts.map((post) => (
+          <div
+            className='mt-8 rounded-md border border-gray-300 p-4'
+            key={post.id}
+          >
+            <h1 className='text-lg font-semibold text-gray-900'>
+              {post.title}
+            </h1>
+            <p className='mt-2 text-gray-900'>{post.body}</p>
+          </div>
+        ))}
       </div>
     </>
   )
